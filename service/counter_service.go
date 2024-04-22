@@ -33,14 +33,14 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 // CounterHandler 计数器接口
 func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
-	//comment
+
 	if r.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
 			res.Code = -1
 			res.ErrorMsg = err.Error()
 		} else {
-			res.Data = counter.Count
+			res.Data = counter
 		}
 	} else if r.Method == http.MethodPost {
 		count, err := modifyCounter(r)
