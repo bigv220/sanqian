@@ -1,8 +1,10 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -25,7 +27,50 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 // QiguaHandler 起卦接口
 func QiguaHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello SanqianQigua!\n")
+	content, err := ioutil.ReadFile("./qigua.json")
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
+
+	parsedData, err := parseJSONData(string(content))
+	if err != nil {
+		log.Fatal("Error parsing JSON: ", err)
+	}
+
+	for _, d := range parsedData {
+		log.Println(d)
+	}
+}
+
+type Data struct {
+	ID              string `json:"id"`
+	Name            string `json:"name"`
+	Alias           string `json:"alias"`
+	Meaning         string `json:"meaning"`
+	Interpretation1 string `json:"interpretation1"`
+	Interpretation2 string `json:"interpretation2"`
+}
+
+func parseJSONData(jsonData string) ([]Data, error) {
+	var data [][]string
+	err := json.Unmarshal([]byte(jsonData), &data)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []Data
+	for _, item := range data {
+		d := Data{
+			ID:              item[0],
+			Name:            item[1],
+			Alias:           item[2],
+			Meaning:         item[3],
+			Interpretation1: item[4],
+			Interpretation2: item[5],
+		}
+		result = append(result, d)
+	}
+	return result, nil
 }
 
 // getIndex 获取主页
