@@ -72,7 +72,7 @@ func parseJSONData(jsonData string) ([]Data, error) {
 
 // getIndex 获取主页
 func getIndex() (string, error) {
-	b, err := ioutil.ReadFile("./index.html")
+	b, err := ioutil.ReadFile("./qigua.txt")
 	if err != nil {
 		return "", err
 	}
