@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // CounterModel 计数器模型
 type CounterModel struct {
 	Id        int32     `gorm:"column:id" json:"id"`
