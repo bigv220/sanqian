@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
 	"wxcloudrun-golang/db/dao"
 )
 
@@ -34,14 +36,39 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Error parsing JSON: ", err)
 	}
-
+	//三钱起卦过程
+	sanQianGua, bianGua := QiGua()
+	//返回结果
 	for _, d := range parsedData {
-		log.Println(d)
+		if d.GuaKey == sanQianGua {
+			resp := JsonResult{
+				Code: 0,
+				Data: map[string]interface{}{
+					"id":              d.ID,
+					"guakey":          d.GuaKey,
+					"name":            d.Name,
+					"alias":           d.Alias,
+					"meaning":         d.Meaning,
+					"interpretation1": d.Interpretation1,
+					"interpretation2": d.Interpretation2,
+					"bianGua":         bianGua,
+				},
+			}
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+			}
+			w.Write(jsonResp)
+			return
+		}
 	}
+
+	return
 }
 
 type Data struct {
 	ID              string `json:"id"`
+	GuaKey          string `json:"guakey"`
 	Name            string `json:"name"`
 	Alias           string `json:"alias"`
 	Meaning         string `json:"meaning"`
@@ -60,15 +87,65 @@ func parseJSONData(jsonData string) ([]Data, error) {
 	for _, item := range data {
 		d := Data{
 			ID:              item[0],
-			Name:            item[1],
-			Alias:           item[2],
-			Meaning:         item[3],
-			Interpretation1: item[4],
-			Interpretation2: item[5],
+			GuaKey:          item[1],
+			Name:            item[2],
+			Alias:           item[3],
+			Meaning:         item[4],
+			Interpretation1: item[5],
+			Interpretation2: item[6],
 		}
 		result = append(result, d)
 	}
 	return result, nil
+}
+
+func QiGua() (string, bool) {
+	// 设置随机种子
+	rand.Seed(time.Now().UnixNano())
+
+	var results []string
+
+	guaMap := map[string]string{
+		"老阴": "1",
+		"老阳": "0",
+		"少阴": "0",
+		"少阳": "1",
+	}
+
+	// 模拟起卦过程6次
+	for i := 0; i < 6; i++ {
+		coin1 := rand.Intn(2) // 0表示反面，1表示正面
+		coin2 := rand.Intn(2)
+		coin3 := rand.Intn(2)
+
+		sum := coin1 + coin2 + coin3
+
+		// 根据组合结果输出对应的起卦名称
+		switch sum {
+		case 0:
+			results = append([]string{"老阴"}, results...)
+		case 1:
+			results = append([]string{"少阴"}, results...)
+		case 2:
+			results = append([]string{"少阳"}, results...)
+		case 3:
+			results = append([]string{"老阳"}, results...)
+		}
+
+		// 输出每个硬币的正反面情况
+		//fmt.Printf("第%d次投掷：硬币1：%d, 硬币2：%d, 硬币3：%d，起卦结果：%s\n", i+1, coin1, coin2, coin3, results[0])
+	}
+
+	// 输出六次的起卦结果
+	guaKey := ""
+	bianGua := false
+	for _, result := range results {
+		if result == "老阴" || result == "老阳" {
+			bianGua = true
+		}
+		guaKey += guaMap[result]
+	}
+	return guaKey, bianGua
 }
 
 // getIndex 获取主页
