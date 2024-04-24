@@ -45,8 +45,9 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 				Code: 0,
 				Data: map[string]interface{}{
 					"id":              d.ID,
-					"guakey":          d.GuaKey,
-					"name":            d.Name,
+					"gua_key":         d.GuaKey,
+					"shang_gua":       d.ShangGua,
+					"xia_gua":         d.XiaGua,
 					"alias":           d.Alias,
 					"meaning":         d.Meaning,
 					"interpretation1": d.Interpretation1,
@@ -68,8 +69,9 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 
 type Data struct {
 	ID              string `json:"id"`
-	GuaKey          string `json:"guakey"`
-	Name            string `json:"name"`
+	GuaKey          string `json:"gua_key"`
+	ShangGua        string `json:"shang_gua"`
+	XiaGua          string `json:"xia_gua"`
 	Alias           string `json:"alias"`
 	Meaning         string `json:"meaning"`
 	Interpretation1 string `json:"interpretation1"`
@@ -88,11 +90,12 @@ func parseJSONData(jsonData string) ([]Data, error) {
 		d := Data{
 			ID:              item[0],
 			GuaKey:          item[1],
-			Name:            item[2],
-			Alias:           item[3],
-			Meaning:         item[4],
-			Interpretation1: item[5],
-			Interpretation2: item[6],
+			ShangGua:        item[2],
+			XiaGua:          item[3],
+			Alias:           item[4],
+			Meaning:         item[5],
+			Interpretation1: item[6],
+			Interpretation2: item[7],
 		}
 		result = append(result, d)
 	}
