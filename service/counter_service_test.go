@@ -12,7 +12,7 @@ func TestQigua(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
 	var results []string
-
+	var coinResult string
 	guaMap := map[string]string{
 		"老阴": "1",
 		"老阳": "0",
@@ -39,7 +39,7 @@ func TestQigua(t *testing.T) {
 		case 3:
 			results = append([]string{"老阳"}, results...)
 		}
-
+		coinResult += fmt.Sprintf("%d%d%d,", coin1, coin2, coin3)
 		// 输出每个硬币的正反面情况
 		fmt.Printf("第%d次投掷：硬币1：%d, 硬币2：%d, 硬币3：%d，起卦结果：%s\n", i+1, coin1, coin2, coin3, results[0])
 	}
@@ -50,5 +50,6 @@ func TestQigua(t *testing.T) {
 	for _, result := range results {
 		guaKey += guaMap[result]
 	}
-	fmt.Print(guaKey)
+	fmt.Println(guaKey)
+	fmt.Println(coinResult)
 }
