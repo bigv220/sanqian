@@ -135,7 +135,7 @@ func QiGua() (string, bool, string) {
 		case 3:
 			results = append([]string{"老阳"}, results...)
 		}
-		coinResult += fmt.Sprintf("%d%d%d", coin1, coin2, coin3)
+		coinResult += fmt.Sprintf("%d%d%d,", coin1, coin2, coin3)
 		// 输出每个硬币的正反面情况
 		//fmt.Printf("第%d次投掷：硬币1：%d, 硬币2：%d, 硬币3：%d，起卦结果：%s\n", i+1, coin1, coin2, coin3, results[0])
 	}
