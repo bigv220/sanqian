@@ -105,6 +105,7 @@ func parseJSONData(jsonData string) ([]Data, error) {
 	return result, nil
 }
 
+// QiGua 起卦过程
 func QiGua() (string, string, bool, string) {
 	// 设置随机种子
 	rand.Seed(time.Now().UnixNano())
