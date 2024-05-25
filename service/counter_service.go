@@ -150,6 +150,7 @@ func QiGua() (string, string, bool, string) {
 
 	// 输出六次的起卦结果
 	guaKey := ""
+	benGuaKey := ""
 	bianGua := false
 	for _, result := range results {
 		if result == "老阴" || result == "老阳" {
