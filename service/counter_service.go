@@ -37,15 +37,17 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Error parsing JSON: ", err)
 	}
 	//三钱起卦过程
-	sanQianGua, bianGua, coinResult := QiGua()
+	sanQianGua, benGuaKey, bianGua, coinResult := QiGua()
 	//返回结果
 	for _, d := range parsedData {
-		if d.GuaKey == sanQianGua {
+		// 变卦 或者 本卦
+		if d.GuaKey == sanQianGua || (d.GuaKey == benGuaKey && bianGua == false) {
 			resp := JsonResult{
 				Code: 0,
 				Data: map[string]interface{}{
 					"id":              d.ID,
 					"gua_key":         d.GuaKey,
+					"ben_gua_key":     benGuaKey,
 					"shang_gua":       d.ShangGua,
 					"xia_gua":         d.XiaGua,
 					"alias":           d.Alias,
@@ -103,7 +105,7 @@ func parseJSONData(jsonData string) ([]Data, error) {
 	return result, nil
 }
 
-func QiGua() (string, bool, string) {
+func QiGua() (string, string, bool, string) {
 	// 设置随机种子
 	rand.Seed(time.Now().UnixNano())
 
@@ -112,6 +114,12 @@ func QiGua() (string, bool, string) {
 	guaMap := map[string]string{
 		"老阴": "1",
 		"老阳": "0",
+		"少阴": "0",
+		"少阳": "1",
+	}
+	benGuaMap := map[string]string{
+		"老阴": "0",
+		"老阳": "1",
 		"少阴": "0",
 		"少阳": "1",
 	}
@@ -148,8 +156,9 @@ func QiGua() (string, bool, string) {
 			bianGua = true
 		}
 		guaKey += guaMap[result]
+		benGuaKey += benGuaMap[result]
 	}
-	return guaKey, bianGua, coinResult
+	return guaKey, benGuaKey, bianGua, coinResult
 }
 
 // getIndex 获取主页
