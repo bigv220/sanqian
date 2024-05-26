@@ -39,8 +39,8 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 	//三钱起卦过程
 	sanQianGua, benGuaKey, bianGua, coinResult := QiGua()
 	//返回结果
-	jsonRes := map[string]interface{}
-	benGuaList := map[string]interface{}
+	jsonRes := map[string]interface{}{}
+	benGuaList := map[string]interface{}{}
 	for _, d := range parsedData {
 		// 变卦 或者 本卦
 		if d.GuaKey == sanQianGua || (d.GuaKey == benGuaKey && bianGua == false) {
@@ -57,7 +57,7 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 				"bianGua":         bianGua,
 				"coin_result":     coinResult,
 			}
-		} else if d.GuaKey == benGuaKey && d.bianGua == true {
+		} else if d.GuaKey == benGuaKey && bianGua == true {
 			benGuaList = map[string]interface{}{
 				"id":              d.ID,
 				"gua_key":         d.GuaKey,
