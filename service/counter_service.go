@@ -39,33 +39,50 @@ func QiguaHandler(w http.ResponseWriter, r *http.Request) {
 	//三钱起卦过程
 	sanQianGua, benGuaKey, bianGua, coinResult := QiGua()
 	//返回结果
+	jsonRes := map[string]interface{}
+	benGuaList := map[string]interface{}
 	for _, d := range parsedData {
 		// 变卦 或者 本卦
 		if d.GuaKey == sanQianGua || (d.GuaKey == benGuaKey && bianGua == false) {
-			resp := JsonResult{
-				Code: 0,
-				Data: map[string]interface{}{
-					"id":              d.ID,
-					"gua_key":         d.GuaKey,
-					"ben_gua_key":     benGuaKey,
-					"shang_gua":       d.ShangGua,
-					"xia_gua":         d.XiaGua,
-					"alias":           d.Alias,
-					"meaning":         d.Meaning,
-					"interpretation1": d.Interpretation1,
-					"interpretation2": d.Interpretation2,
-					"bianGua":         bianGua,
-					"coin_result":     coinResult,
-				},
+			jsonRes = map[string]interface{}{
+				"id":              d.ID,
+				"gua_key":         d.GuaKey,
+				"ben_gua_key":     benGuaKey,
+				"shang_gua":       d.ShangGua,
+				"xia_gua":         d.XiaGua,
+				"alias":           d.Alias,
+				"meaning":         d.Meaning,
+				"interpretation1": d.Interpretation1,
+				"interpretation2": d.Interpretation2,
+				"bianGua":         bianGua,
+				"coin_result":     coinResult,
 			}
-			jsonResp, err := json.Marshal(resp)
-			if err != nil {
-				log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		} else if d.GuaKey == benGuaKey && d.bianGua == true {
+			benGuaList = map[string]interface{}{
+				"id":              d.ID,
+				"gua_key":         d.GuaKey,
+				"ben_gua_key":     benGuaKey,
+				"shang_gua":       d.ShangGua,
+				"xia_gua":         d.XiaGua,
+				"alias":           d.Alias,
+				"meaning":         d.Meaning,
+				"interpretation1": d.Interpretation1,
+				"interpretation2": d.Interpretation2,
+				"bianGua":         bianGua,
+				"coin_result":     coinResult,
 			}
-			w.Write(jsonResp)
-			return
 		}
 	}
+	jsonRes["ben_gua_list"] = benGuaList
+	resp := JsonResult{
+		Code: 0,
+		Data: jsonRes,
+	}
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+	}
+	w.Write(jsonResp)
 
 	return
 }
